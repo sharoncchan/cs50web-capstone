@@ -1,4 +1,7 @@
 {% extends "blog/layout.html" %}
+
+{% load blog_extras %}
+
 {% block title %}{{category.name | upper}}- DevLearn{% endblock %}
 
 {% block body %}
@@ -22,7 +25,7 @@
         </div>
         <div class="card-block px-2">
             <h3 class="card-title mt-3 mb-3"><a class="text-dark text-decoration-none" href="{{post.get_absolute_url}}">{{post.title}}</a></h3>
-            <p>{{post.body | slice:"100"}} ...</p>
+            <p>{{post.body|convert_markdown|slice:"100"|safe}} ...</p>
             <p class="card-text">By :   <img
                 src="{{post.poster_avatar}}"
                 class="rounded-circle mb-3 mt-3"

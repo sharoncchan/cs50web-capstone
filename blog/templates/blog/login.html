@@ -24,7 +24,7 @@
     <form class="form-signin" action="{% url 'login' %}" method="post">
       {% csrf_token %}
       <img class="mb-4" src="https://avatars.githubusercontent.com/u/10129524?v=4" alt="" width="72" height="72">
-      <h1 class="h3 mb-3 font-weight-normal">Welcome to the Devlearn Community</h1>
+      <h1 class="h3 mb-3 font-weight-normal">Welcome to the DevLearn Community</h1>
       {% if error %}
       <div class="alert alert-danger">
         {{message}}

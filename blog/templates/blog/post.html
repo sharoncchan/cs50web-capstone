@@ -1,0 +1,134 @@
+{% extends "blog/layout.html" %}
+
+{% load blog_extras %}
+
+{% block title %}{{post.title}}{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card mb-3 mt-5 border-0">
+        <img src="{{post.image}}" class="card-img-top" alt="photo for the post">
+        <div class="card-body">
+            <h1 class="card-title text-center mt-3">{{post.title}}</h1>
+          
+            <div class="card-title fs-4">
+                <div class="d-flex flex-wrap justify-content-evenly mt-5">
+                    <div>
+                        <img src="{{post.poster_avatar}}" width="30" height="30"> <a class="text-decoration-none text-reset" href="{% url 'profile' post.poster %}">{{post.poster | title}}</a> 
+                    </div>
+                    <div>
+                         {{post.post_date|date:" d M Y"}}
+                    </div>
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-book" viewBox="0 0 16 16">
+                            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+                          </svg>    {{post.reading_duration}} mins read
+                    </div>
+                </div>
+            </div>
+            {% if request.user == post.poster %}
+                <div class="alert alert-primary text-center mt-3" role="alert">
+                You published this article
+                </div>
+                <button id="edit-{{post.id}}" class="edit btn btn-primary mb-3" data-editid="{{post.id}}">Edit post</button>
+                <button id="save-{{post.id}}" class="save btn btn-success mb-3" style="display:none" data-saveid="{{post.id}}">Save</button>
+            {% endif %}
+            <div id="original-content-{{post.id}}">
+                <p class="card-text mt-5">{{post.body|convert_markdown|safe }}</p>
+            </div>
+            <textarea id="edited-content-{{post.id}}" style="display:none" class="form-control" rows="10" cols="50">{{post.body}}</textarea>
+            <div class="row mt-5">
+                <div class="col-2 post-header">
+                    {% if request.user.is_authenticated %}
+                        {% if request.user in post.likes.all %}
+                            <i id="like-{{post.id}}" data-likeid="{{post.id}}" class="fa fa-thumbs-up like" style="color:#1E90FF"></i><span id="likecount-{{post.id}}" class="ms-2">{{post.likes.count}}</span>
+                        {% else %}
+                            <i id="like-{{post.id}}" data-likeid="{{post.id}}" class="fa fa-thumbs-up like" style="color:grey"></i><span id="likecount-{{post.id}}" class="ms-2">{{post.likes.count}}</span>
+                        {% endif %}
+                    
+                    {% else %}
+                        <i data-bs-toggle="modal" data-bs-target="#staticBackdrop" id="like-{{post.id}}" data-likeid="{{post.id}}" class="fa fa-thumbs-up like" style="color:grey"></i><span id="likecount-{{post.id}}" class="ms-2">{{post.likes.count}}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <hr>
+            <div class="card border-0">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="comment-box ml-2 mb-5"> 
+                            <h4>Discussion ({{comments.count}})</h4> 
+                            <form action="{% url 'post' post.slug %}" class="mt-3" method="post">
+                                {% csrf_token %}
+                                {{comment_form}}
+                                {% if request.user.is_authenticated %}
+                                    <button class="btn btn-success send btn-sm mt-3">Submit</button> 
+                                {% else %}
+                                    <button type="button" class="btn btn-success send btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                    Submit
+                                    </button>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+               
+                    {% load mptt_tags %}
+                    <div>
+                        {% recursetree comments %}
+                        <div id="div-{{node.id}}" class="my-2 p-2" style="border:1px solid grey">
+                            <div class="d-flex justify-content-between">
+                                <div class="mb-3 fw-bold"><img src="{{node.comment_avatar}}" width="20" height="20"> {{ node.username }}</div>
+                                <div> {{ node.post_date }}</div>
+                            </div>
+                            <div>
+                                {{ node.content }}
+                            </div>
+                            {% if request.user.is_authenticated %}
+                                <button id="reply-button-{{node.id}}" class="reply-button btn-sm btn-primary mt-3" data-replyid="{{node.id}}"><i class="fa fa-reply"></i> Reply</button>
+                            {% else %}
+                                <button type="button" class="btn btn-primary send btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                <i class="fa fa-reply"></i> Reply</button>
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        {% if not node.is_leaf_node %}
+                            <div class="children ms-3">
+                                {{ children }}
+                            </div>
+                        {% endif %}
+                        {% endrecursetree %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center">
+            <h2>DevLearn</h2>
+        <img class="modal-title" id="staticBackdropLabel" src="https://avatars.githubusercontent.com/u/10129524?v=4" alt="" width="72" height="72">
+         
+          <h3 class="mb-3">Log in or sign up to continue</h3>
+          <a href ="{% url 'login' %}"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Log in</button></a>
+          <a href="{% url 'register' %}"><button type="button" class="btn btn-primary">Sign up</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  
+  
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "blog/layout.html" %}
+{% block title %}DevLearn{% endblock %}
+
+{% block body %}
+
+<div role="main">
+
+    <section class="jumbotron text-center bg-light">
+      <div class="container">
+        {% if request.user.is_authenticated %}
+        <h1 class="jumbotron-heading mt-5 mb-4">Welcome {{request.user|title}}! <span class="ms-2"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/383-waving-hand-1.svg/200px-383-waving-hand-1.svg.png" width="60px" height="60px"></span></h1>
+        {% else %}
+        <h1 class="jumbotron-heading mt-5 mb-4">Join the community!</h1>
+        {% endif %}
+        <p class="lead text-muted">DEV Learn is a community of amazing developers.
+            Teach a topic of your choice, learn from others and
+            grow your career with the global dev community! 
+        </p>
+        {% if not request.user.is_authenticated %}
+        <p>
+          <a href="{% url 'login' %}" class="btn btn-primary my-2">Log in</a>
+          <a href="{% url 'register' %}" class="btn btn-secondary my-2">Sign Up</a>
+        </p>
+        {% endif %}
+      </div>
+    </section>
+    <div class="container mt-5" style="text-align:center">
+      <h1 class="mb-5">Explore your favourite topics</h1> 
+   <div class="row">
+       <div class="col-md-3">
+         <a href="{% url 'category' 'python' %}"><img class="rounded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Python-logo-notext.svg/121px-Python-logo-notext.svg.png" alt="Generic placeholder image" width="120" height="120"></a>
+         <h3>Python</h3>
+       </div><!-- /.col-lg-4 -->
+       <div class="col-md-3">
+           <a href="{% url 'category' 'html' %}"><img class="rounded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/120px-HTML5_logo_and_wordmark.svg.png" alt="Generic placeholder image" width="120" height="120"></a>
+           <h3>HTML</h3>
+         </div>
+         <div class="col-md-3">
+           <a href="{% url 'category' 'css' %}"><img class="rounded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/CSS3_logo_and_wordmark.svg/120px-CSS3_logo_and_wordmark.svg.png" alt="Generic placeholder image" width="120" height="120"></a>
+           <h2>CSS</h2>
+         </div>
+         <div class="col-md-3">
+           <a href="{% url 'category' 'javascript' %}"><img class="rounded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/512px-Unofficial_JavaScript_logo_2.svg.png" alt="Generic placeholder image" width="120" height="120"></a>
+           <h3>Javascript</h3>
+         </div>
+       </div><!-- /.col-lg-4 -->
+     </div><!-- /.row -->
+   </div>
+    <div class="album py-5 bg-light ">
+      <div class="container">
+        <h1 style="text-align:center" class="mb-3">All posts</h1>
+        <div class="row">
+          {% for post in posts %}
+          <div id="posts-box" class="col-md-4">
+            <div class="card mb-4 border-0">
+              <img class="card-img-top" src="{{post.image}}" alt="Image for post" height="150px">
+              <div class="card-body ">
+                <p class="card-text fw-bold ">
+                  <a href="#" class="text-decoration-none"><img 
+                    src="{{post.poster_avatar}}"
+                    class="rounded-circle mb-3 mt-3"
+                    style="width: 30px;"
+                    alt="Avatar"
+                  />     <a href="{% url 'profile' post.poster %}" class="text-decoration-none text-dark">{{post.poster | title}}</a>
+                </p>
+                <p>
+                  <a href="{{post.get_absolute_url}}" class="text-decoration-none text-dark fw-bold">{{post.title}}</a>
+                </p>
+                <p class="fs-6 text-muted">#{{post.category|upper}}</p>
+               
+                
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    {% if request.user.is_authenticated %}
+                      {% if request.user in post.bookmarks.all %}
+                        <button type="button" id="bookmark-{{post.id}}" data-bookmarkid="{{post.id}}" title="Bookmark this post" class="btn btn-sm btn-secondary bookmark"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmarks" viewBox="0 0 16 16">
+                          <path d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+                          <path d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+                        </svg></button>
+                      {% else %}
+                        <button type="button" id="bookmark-{{post.id}}" data-bookmarkid="{{post.id}}" title="Bookmark this post" class="btn btn-sm btn-outline-secondary bookmark"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmarks" viewBox="0 0 16 16">
+                          <path d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+                          <path d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+                        </svg></button>
+                      {% endif %}
+                    
+                    {% else %}
+                      <!-- Button trigger modal -->
+                      <button type="button" title="Bookmark this post" class="btn btn-sm btn-outline-secondary bookmark mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmarks" viewBox="0 0 16 16">
+                        <path d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+                        <path d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+                        </svg></button>
+                    {% endif %}
+                  </div>
+                  <small class="text-muted">{{post.reading_duration}} mins read</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+           
+        </div>
+        
+      </div>
+    </div>
+   
+
+    
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+          <h2>DevLearn</h2>
+      <img class="modal-title" id="staticBackdropLabel" src="https://avatars.githubusercontent.com/u/10129524?v=4" alt="" width="72" height="72">
+       
+        <h3 class="mb-3">Log in or sign up to continue</h3>
+        <a href ="{% url 'login' %}"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Log in</button></a>
+        <a href="{% url 'register' %}"><button type="button" class="btn btn-primary">Sign up</button></a>
+      </div>
+      
+      
+  
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+
+
+
+    
+
+    
+ 
+
+
+
+  </main>
+
+
+
+{% endblock %}

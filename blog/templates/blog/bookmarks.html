@@ -1,0 +1,54 @@
+{% extends "blog/layout.html" %}
+{% block title %}My Bookmarks{% endblock %}
+
+{% block body %}
+
+        
+<header>
+    <!-- Jumbotron -->
+    <div class="p-5 text-center bg-light">
+      <h1 class="mb-3">My bookmarks</h1>
+      {% if posts.count == 0 %}
+      <h4 class="mb-3">No bookmarks yet</h4>
+      {% else %}
+      <h4 class="mb-3">A collection of {{posts.count}} posts</h4>
+      {% endif %}
+     
+    </div>
+    <!-- Jumbotron -->
+</header>
+{% for post in posts %}
+    <div class="card flex-row flex-wrap">
+        <div class="card-header border-0">
+            <img src="{{post.image}}" alt="image of post" width="300px" height="200px">
+        </div>
+        <div class="card-block px-2">
+            <h3 class="card-title mt-3 mb-3"><a class="text-dark text-decoration-none" href="{{post.get_absolute_url}}">{{post.title}}</a></h3>
+            <p>{{post.body | slice:"100"}}...</p>
+            <p class="card-text">By :   <img
+                src="{{post.poster_avatar}}"
+                class="rounded-circle mb-3 mt-3"
+                style="width: 20px;"
+                alt="Avatar"
+            />  <a href="{% url 'profile' post.poster %}">{{post.poster|title}}</a></p>
+            {% if request.user in post.bookmarks.all %}
+                <button type="button" id="bookmark-{{post.id}}" data-bookmarkid="{{post.id}}" title="Bookmark this post" class="btn btn-sm btn-secondary bookmark mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmarks" viewBox="0 0 16 16">
+                <path d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+                <path d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+                </svg></button>
+            {% else %}
+                <button type="button" id="bookmark-{{post.id}}" data-bookmarkid="{{post.id}}" title="Bookmark this post" class="btn btn-sm btn-outline-secondary bookmark mb-3"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmarks" viewBox="0 0 16 16">
+                <path d="M2 4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v11.5a.5.5 0 0 1-.777.416L7 13.101l-4.223 2.815A.5.5 0 0 1 2 15.5V4zm2-1a1 1 0 0 0-1 1v10.566l3.723-2.482a.5.5 0 0 1 .554 0L11 14.566V4a1 1 0 0 0-1-1H4z"/>
+                <path d="M4.268 1H12a1 1 0 0 1 1 1v11.768l.223.148A.5.5 0 0 0 14 13.5V2a2 2 0 0 0-2-2H6a2 2 0 0 0-1.732 1z"/>
+                </svg></button>
+            {% endif %}
+            <i class="fa fa-thumbs-up ms-3 mt-2" style="color:grey; font-size:24px;"><span class="ms-2">{{post.likes.count}}</span></i>
+                
+        </div>
+    </div>
+{% endfor %}
+
+
+
+
+{% endblock %}

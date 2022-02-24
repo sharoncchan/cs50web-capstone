@@ -1,0 +1,39 @@
+{% extends "blog/layout.html" %}
+{% block title %} Create a post {% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+       <h1 class="mb-3">Teach a topic</h1>
+       <div class="lh-lg">
+        <form action="{% url 'create' %}" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="formGroupExampleInput" class="fw-bold">Title</label>
+              <input type="text" class="form-control" name="title" required autocomplete="off" >
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput" class="fw-bold">Category</label>
+                <select name="category" class="form-select" aria-label="Default select example" required >
+                    <option selected>Open this select menu</option>
+                    {% for category in categories %}
+                    <option value="{{category.name}}">{{category.name|upper}}</option>
+                    {% endfor %}
+                  </select>
+              </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2" class="fw-bold">Reading time(mins)</label>
+                <input type="number" class="form-control" name="reading_duration"  required >
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2" class="fw-bold">URL of the image for the post</label>
+                <input type="url" class="form-control" name="image"  required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="formGroupExampleInput2" class="fw-bold">Content</label>
+                <textarea class="form-control" rows="10" cols="50" name="content" required ></textarea>
+            </div>
+            <button class="btn btn-md btn-primary btn-block mt-3" type="submit">Submit Post</button>
+          </form>
+        </div>
+    </div>
+{% endblock %}

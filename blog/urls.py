@@ -2,6 +2,7 @@ from django.urls import path
 from . import views 
 
 
+
 urlpatterns= [
     path("", views.index, name="index"),
     path("login", views.login_view, name="login"),
@@ -17,5 +18,6 @@ urlpatterns= [
     # API Routes
     path("bookmark/<str:post_id>", views.bookmark, name="bookmark"),
     path("like/<str:post_id>", views.like, name="like"),
-    path("edit/<str:post_id>", views.edit, name="edit")
+    path("edit/<str:post_id>", views.edit, name="edit"),
+    
 ]

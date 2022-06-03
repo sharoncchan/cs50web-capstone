@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Category, Post, Comment
 from .forms import NewCommentForm
 from django.utils.text import slugify
+# from django.views.generic import ListView
+from django.core.paginator import Paginator
 
 
 
@@ -15,14 +17,22 @@ from django.utils.text import slugify
 # Create your views here.
 
 def index(request):
+    # Get all the posts and order them in reverse chronological order
     posts = Post.objects.all().order_by("-post_date")
+
+     # Display 6 posts per page
+    paginator = Paginator(posts, per_page=6)
     categories = Category.objects.all()
+
+    # Create a page number variable that request for the current page number
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "blog/index.html",{
         "posts":posts,
+        "page_obj":page_obj,
         "categories" : categories
     })
-
-    
 
 def login_view(request):
     if request.method == "POST":
@@ -152,11 +162,19 @@ def category(request, category_name):
      # Get all the posts in the category
      posts = Post.objects.filter(category = category)
 
+     # Display 6 posts per page
+     paginator = Paginator(posts, per_page = 6)
+    
+     # Create a page number variable that request for the current page number
+     page_number = request.GET.get("page")
+     page_obj = paginator.get_page(page_number)
+
      # Exclude the current category
      other_categories = Category.objects.exclude(name = category_name)
 
      return render(request, "blog/category.html",{
         "posts" : posts,
+        "page_obj":page_obj,
         "category": category,
         "other_categories" : other_categories
     })
@@ -203,8 +221,16 @@ def bookmarks(request):
     # Get all the posts where the bookmarks contains the current user
     posts =  Post.objects.filter(bookmarks = request.user)
 
+     # Display 6 posts per page
+    paginator = Paginator(posts, per_page = 6)
+    
+    # Create a page number variable that request for the current page number
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "blog/bookmarks.html",{
-        "posts" : posts
+        "posts" : posts,
+        "page_obj":page_obj
     })
 
 
@@ -214,8 +240,17 @@ def profile(request, profile_name):
 
     # Get all the posts the user has posted
     posts =  Post.objects.filter(poster = profile_user)
+
+    # Display 6 posts per page
+    paginator = Paginator(posts, per_page = 6)
+    
+    # Create a page number variable that request for the current page number
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "blog/profile.html",{
         "posts" : posts,
+        "page_obj":page_obj,
         "profile_user" : profile_user
     })
 

@@ -1,4 +1,5 @@
 {% extends "blog/layout.html" %}
+{% load static %}
 {% block title %}DevLearn{% endblock %}
 
 {% block body %}
@@ -49,9 +50,9 @@
     <div class="album py-5 bg-light ">
       <div class="container">
         <h1 style="text-align:center" class="mb-3">All posts</h1>
-        <div class="row">
-          {% for post in posts %}
-          <div id="posts-box" class="col-md-4">
+        <div class="row infinite-container">
+          {% for post in page_obj.object_list %}
+          <div id="posts-box" class="col-md-4 infinite-item">
             <div class="card mb-4 border-0">
               <img class="card-img-top" src="{{post.image}}" alt="Image for post" height="150px">
               <div class="card-body ">
@@ -100,6 +101,20 @@
           {% endfor %}
            
         </div>
+        <div class="d-flex  justify-content-center ">
+          <button class="btn btn-primary loading">
+            <span class="spinner-border spinner-border-sm"></span>
+            Loading..
+          </button>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            {% if page_obj.has_next %}
+              <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}"></a>
+            {% endif %}
+          </div>
+
         
       </div>
     </div>
@@ -142,6 +157,27 @@
 
 
   </main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>"></script>
+<script src="{% static 'blog/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'blog/infinite.min.js' %}"></script>
+<script>
+  var infinte = new Waypoint.Infinite({
+    element:$('.infinite-container')[0],
+    offset:"bottom-in-view",
+    onBeforePageLoad: function () {
+      $('.loading').show();
+  },
+  onAfterPageLoad: function () {
+      $('.loading').hide();
+  }
+
+
+
+    
+  
+  })
+
+</script> 
 
 
 

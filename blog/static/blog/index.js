@@ -186,7 +186,7 @@ function edit_post(edit_button) {
       `#edited-content-${post_id}`
     ).value;
 
-    // Pass a Post request to the like route
+    // Pass a Post request to the edit route
     fetch(`/edit/${post_id}`, {
       method: "POST",
       headers: { "X-CSRFToken": csrftoken },

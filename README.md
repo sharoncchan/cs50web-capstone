@@ -12,7 +12,7 @@ All webpages of the project are mobile-responsive.
 This project contains the features below:
 
 - Allows users to post their content of their aricles in markdown format which will be converted and displayed as HTML using the markdown package
-- Utilizes the Django MPTT (Modified Preorder Tree Transversal) app to create the models and inteface for user to comment and reply to other user's comments
+- Utilizes the Django MPTT (Modified Preorder Tree Transversal) to create the models and interface for user to comment and reply to other user's comments
 - Boostrap features such as modal forms is tapped on to prompt users to log in or sign up if they are not logged in and attempt to like or bookmark an article
 - Using Javascript, user can like/bookmark/edit and save an article without refreshing the page and the color of these icons change accordingly to signify the change made
 - Utilizes the Waypoints library to implement infinite scrolling. Posts are loaded as the user scrolls down the page
